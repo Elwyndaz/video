@@ -218,7 +218,7 @@ const Verdict = ({ children, duration }: { children: string; duration: number })
       <div style={{ position: "absolute", left: 29, right: 29, top: 100, opacity: fade, transform: `translateY(${(1 - Math.min(1, f / 8)) * -30}px)` }}>
         <div style={{ background: CREAM, border: `5px solid ${INK}`, boxShadow: "8px 8px 0 rgba(0,0,0,.45)", padding: "12px 22px 18px" }}>
           <div style={{ ...text, color: "#1d6f68", fontSize: 26, fontWeight: 700, letterSpacing: 2 }}>FORSKNINGEN</div>
-          <div style={{ ...body, color: INK, fontSize: 38, lineHeight: 1.2 }}>{children}</div>
+          <div style={{ ...body, color: INK, fontSize: 34, lineHeight: 1.2 }}>{children}</div>
         </div>
       </div>
     </AbsoluteFill>
