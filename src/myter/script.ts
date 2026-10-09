@@ -32,7 +32,7 @@ export const beats: Beat[] = [
     attack: "SJU PROCENT",
     line: "Orden är bara 7 procent av budskapet. Resten är kroppsspråk!",
     reply: ["mira", "Då läser jag 7 procent av ditt nyhetsbrev."],
-    verdict: "Siffrorna gäller känslor i ett labb, inte alla budskap.",
+    verdict: "Forskaren bakom siffrorna säger själv att de inte gäller så.",
   },
   {
     attack: "POWER POSE",
