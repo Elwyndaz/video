@@ -1,8 +1,8 @@
 ---
 schemaVersion: 1
 status: active
-currentGoal: "Patrik watches the Myter film with sound on the live page and decides whether to share it."
-nextAction: "Patrik opens https://orgutveckling.se/video/myter/ on desktop and phone, watches with sound, then runs https://www.linkedin.com/post-inspector/ on the URL before posting."
+currentGoal: "Patrik shares the Myter film; he has watched it and approved it."
+nextAction: "Patrik runs https://www.linkedin.com/post-inspector/ on the URL before posting."
 blockers: []
 reviewedAt: 2026-10-09
 ---
@@ -13,6 +13,9 @@ Live since 2026-10-09: `https://orgutveckling.se/video/` and `https://orgutveckl
 
 The film was reviewed by a critic agent before publishing. Three verdicts claimed more than the live `/forskning` entries and were reworded; the stamp went from "INGEN EFFEKT" to "INGET STÖD"; the title card no longer names the game.
 
-Not verified by anyone yet: how the music sounds, how the motion looks in playback, the LinkedIn link preview.
+Patrik watched the film 2026-10-09 and approved it. At his request the page shows only the film (no verdict list, no transcript), and the sju procent verdict reads "Forskaren bakom siffrorna säger själv att de inte gäller så."
 
-The first version of the film code still sits in `C:\dev\kontoret\film\` as four unpushed commits there. It is superseded by this repo.
+Not verified yet: the LinkedIn link preview.
+
+The first version in the kontoret repo (`film/`) was removed 2026-10-09; this repo is the only copy.
+
