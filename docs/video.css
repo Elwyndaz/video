@@ -1,15 +1,4 @@
 /* Filmsidorna under orgutveckling.se/video/. Designsystemet kommer från /style.css på huvudsajten; här ligger bara det filmsidorna lägger till. */
-.film{display:grid;grid-template-columns:minmax(0,640px) minmax(0,1fr);gap:clamp(32px,5vw,72px);align-items:start;margin-top:clamp(24px,3vw,40px)}
-.film>*{min-width:0}
+.film{max-width:720px;margin:clamp(24px,3vw,40px) auto 0}
 .film video{display:block;width:100%;height:auto;aspect-ratio:1/1;background:#111522;border:1px solid var(--black)}
-.film-note{font:400 12px/1.7 var(--mono);color:var(--dampad);margin-top:14px;max-width:none}
-.film-says h2{font:500 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;padding-bottom:18px;border-bottom:1px solid var(--black)}
-.film-says .numbered b{display:block;font-weight:500;color:var(--black)}
-.film-says .numbered a{text-decoration:none;border-bottom:1px solid rgba(21,21,15,.3)}
-.film-says .numbered a:hover{color:var(--accent);border-color:var(--accent)}
-.film-says .numbered span:last-child{color:var(--brod-ljus)}
-.film-text{margin-top:24px}
-.film-text summary{font:500 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;cursor:pointer;padding:14px 0}
-.film-text p{font-size:15px;line-height:1.6;color:var(--brod-ljus);margin-top:12px}
-.film-text b{font-weight:500;color:var(--black)}
-@media(max-width:900px){.film{grid-template-columns:minmax(0,1fr)}}
+.film-note{font:400 12px/1.7 var(--mono);color:var(--dampad);margin-top:14px;max-width:none;text-align:center}
