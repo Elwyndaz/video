@@ -1,4 +1,5 @@
 /* Filmsidorna under orgutveckling.se/video/. Designsystemet kommer från /style.css på huvudsajten; här ligger bara det filmsidorna lägger till. */
+.film-col{max-width:720px;margin-left:auto;margin-right:auto}
 .film{max-width:720px;margin:clamp(24px,3vw,40px) auto 0}
 .film video{display:block;width:100%;height:auto;aspect-ratio:1/1;background:#111522;border:1px solid var(--black)}
 .film-note{font:400 12px/1.7 var(--mono);color:var(--dampad);margin-top:14px;max-width:none;text-align:center}
