@@ -4,7 +4,7 @@ status: active
 currentGoal: "Patrik shares the Myter film; he has watched it and approved it."
 nextAction: "Patrik runs https://www.linkedin.com/post-inspector/ on the URL before posting."
 blockers: []
-reviewedAt: 2026-10-09
+reviewedAt: 2026-10-17
 ---
 
 # Handoff
@@ -19,3 +19,7 @@ Not verified yet: the LinkedIn link preview.
 
 The first version in the kontoret repo (`film/`) was removed 2026-10-09; this repo is the only copy.
 
+
+## Beroendeuppdatering 2026-10-17
+
+- Remotion 4.0.536, react/react-dom 19.3.1, playwright 1.64.1, typescript 7.0.2 (Go-versionen) utan kodändringar. `npm run check` och `remotion compositions` gröna före och efter, `npm audit` 0.
