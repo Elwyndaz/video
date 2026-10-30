@@ -37,3 +37,12 @@ Short films for Centrum för Organisationsutveckling, made in code, and the page
 | `myter` | `Myter` | 81,6 s (2448 frames at 30 fps) | 1080×1080, 150 BPM grid: 1 bar = 48 frames |
 
 `myter`: pixel art drawn procedurally as rects on a logical grid (135 px square shown, 8 screen px per logical px), one SVG with `viewBox` as camera. Characters Liv, Nadja, Göran and Mira come from the game Kontoret, but the film does not link to the game.
+
+## Audits
+- Secrets: 2026-10-30, pass, gitleaks 0 findings in 10 commits
+- Actions: 2026-10-30, n/a, no GitHub Actions workflows
+- npm audit: 2026-10-30, fail, 0 critical 10 high 0 moderate in production, 0 in the dev chain
+- Dependabot: 2026-10-30, fail, 5 open alerts: 1 high 2 medium 2 low runtime, 0 dev (fast-uri, zod)
+- Headers (automated): 2026-10-30, pass, 6 of 6 on orgutveckling.se/video, Observatory A+ on orgutveckling.se
+- WCAG 2.2 AA (automated): 2026-10-30, needs-review, axe 4.14.0 0 violations on orgutveckling.se/video (mobile, one page); manual keyboard pass not done
+- UX (automated): 2026-10-30, warn, 4 of 6 script checks pass on orgutveckling.se/video (no --interact): warn Fitts targets; warn Von Restorff primary; screenshot review not done
