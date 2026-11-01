@@ -47,3 +47,8 @@ Short films for Centrum för Organisationsutveckling, made in code, and the page
 - WCAG 2.2 AA (automated): 2026-10-30, needs-review, axe 4.14.0 0 violations on orgutveckling.se/video (mobile, one page); manual keyboard pass not done
 - UX (automated): 2026-10-30, warn, 4 of 6 script checks pass on orgutveckling.se/video (no --interact): warn Fitts targets; warn Von Restorff primary; screenshot review not done
 - OWASP Top 10: 2026-10-30, pass, code review (Mistral Large; Claude read only the verdict line, lows unread), no live probe; 0 high, 0 medium reported
+
+## Compute
+Vart ledig kvot kan gå. Läses av fliken Compute i elwyn-dash och `tools/compute-queue.mjs` i aifabriken.
+
+- Skapa: oändlig, fler kortfilmer för orgutveckling.se/video/
