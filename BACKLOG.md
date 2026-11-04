@@ -14,4 +14,4 @@
 - Remotion project with the `Myter` film (81,6 s, 1080×1080), synthesised score and cues.
 - `/video/myter/` page: self-hosted video, film and heading in one centred column, onward rows to research and courses, closing request band.
 - `/video/` register page.
-- `npm run check:pages`: four widths per page, fails on console errors, overflow or a video that will not play.
+- `npm run check:pages`: four widths per page, fails on console errors, overflow, a video that will not play or an axe WCAG 2.2 AA violation.

@@ -1,6 +1,10 @@
-// Verdict for a /video/ page: no console errors, no horizontal overflow at four widths, the video can play. Screenshots to out/.
+// Verdict for a /video/ page: no console errors, no horizontal overflow at four widths, the video can play, no axe WCAG 2.2 AA violations. Screenshots to out/.
 // Usage: npm run preview (in another terminal), then npm run check:pages. Against live: node scripts/check-pages.mjs https://orgutveckling.se
+import { readFile } from "node:fs/promises";
+import { createRequire } from "node:module";
 import { chromium } from "playwright";
+
+const axeSource = await readFile(createRequire(import.meta.url).resolve("axe-core/axe.min.js"), "utf8");
 
 const base = process.argv[2] ?? "http://127.0.0.1:4391";
 // CHROMIUM points at a browser binary when the installed playwright has none of its own.
@@ -25,9 +29,15 @@ for (const path of ["/video/myter/", "/video/"]) {
       await new Promise((r) => setTimeout(r, 1200));
       return v.currentTime > 0.3 ? "plays" : `stuck (readyState ${v.readyState})`;
     });
-    const bad = res.status() !== 200 || over > 0 || errors.length || video.startsWith("stuck");
+    // evaluate() is not subject to the page's CSP, so axe runs without loosening it. preload: false stops axe fetching the font stylesheet, which connect-src blocks.
+    await page.evaluate(axeSource);
+    const axe = await page.evaluate(async () => {
+      const r = await window.axe.run(document, { runOnly: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"], preload: false });
+      return r.violations.map((v) => `${v.id} (${v.nodes.length})`);
+    });
+    const bad = res.status() !== 200 || over > 0 || errors.length || video.startsWith("stuck") || axe.length;
     if (bad) failed++;
-    console.log(`${bad ? "FAIL" : "ok  "} ${path} @${width}: status ${res.status()}, overflow ${over}, video ${video}${errors.length ? ", errors: " + errors.slice(0, 3).join(" | ") : ""}`);
+    console.log(`${bad ? "FAIL" : "ok  "} ${path} @${width}: status ${res.status()}, overflow ${over}, video ${video}, axe ${axe.length ? axe.join(" ") : 0}${errors.length ? ", errors: " + errors.slice(0, 3).join(" | ") : ""}`);
     if (width === 390 || width === 1440) {
       await page.evaluate(() => document.querySelector("video")?.pause());
       await page.screenshot({ path: `out/page${path.replace(/\W+/g, "-")}${width}.png`, fullPage: true });
