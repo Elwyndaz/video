@@ -1,4 +1,4 @@
-// Verdict for a /video/ page: no console errors, no horizontal overflow at four widths, the video can play, no axe WCAG 2.2 AA violations. Screenshots to out/.
+// Verdict for a /video/ page: no console errors, no horizontal overflow at four widths, the video can play, no axe WCAG 2.2 AA violations, link preview tags and image in place. Screenshots to out/.
 // Usage: npm run preview (in another terminal), then npm run check:pages. Against live: node scripts/check-pages.mjs https://orgutveckling.se
 import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
@@ -35,6 +35,19 @@ for (const path of ["/video/myter/", "/video/"]) {
       const r = await window.axe.run(document, { runOnly: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"], preload: false });
       return r.violations.map((v) => `${v.id} (${v.nodes.length})`);
     });
+    // Link preview: og/twitter tags present, og:url is the canonical, the image is served at its stated size. Checked against base, not live.
+    const meta = await page.evaluate(() => {
+      const m = (k) => document.querySelector(`meta[property="${k}"], meta[name="${k}"]`)?.content ?? "";
+      return { url: m("og:url"), canonical: document.querySelector('link[rel="canonical"]')?.href ?? "", image: m("og:image"), w: m("og:image:width"), h: m("og:image:height"), need: ["og:title", "og:description", "og:image:alt", "twitter:card", "twitter:image"].filter((k) => !m(k)) };
+    });
+    const og = [...meta.need.map((k) => `no ${k}`)];
+    if (!meta.url || meta.url !== meta.canonical) og.push(`og:url ${meta.url} is not canonical ${meta.canonical}`);
+    if (!meta.image.startsWith("https://")) og.push("og:image not absolute");
+    else {
+      const img = await page.evaluate(async (src) => new Promise((done) => { const i = new Image(); i.onload = () => done(`${i.naturalWidth}x${i.naturalHeight}`); i.onerror = () => done("missing"); i.src = src; }), new URL(meta.image).pathname);
+      if (img !== `${meta.w}x${meta.h}`) og.push(`og:image ${img}, tags say ${meta.w}x${meta.h}`);
+    }
+    if (og.length) errors.push(...og);
     const bad = res.status() !== 200 || over > 0 || errors.length || video.startsWith("stuck") || axe.length;
     if (bad) failed++;
     console.log(`${bad ? "FAIL" : "ok  "} ${path} @${width}: status ${res.status()}, overflow ${over}, video ${video}, axe ${axe.length ? axe.join(" ") : 0}${errors.length ? ", errors: " + errors.slice(0, 3).join(" | ") : ""}`);
