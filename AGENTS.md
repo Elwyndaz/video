@@ -6,7 +6,7 @@ Read `C:\dev\CLAUDE.md` first. What this repo is: `CONTEXT.md`.
 
 - `npm run check`: type-check.
 - `npm run render`: rebuilds audio, renders `docs/myter/myter.mp4`.
-- `npm run preview` in one terminal, `npm run check:pages` in another: every page at four widths, fails on console errors (CSP included), horizontal overflow or a video that will not play. After a push: `node scripts/check-pages.mjs https://orgutveckling.se`.
+- `npm run preview` in one terminal, `npm run check:pages` in another (`CHROMIUM=/path/to/chromium` if playwright has no browser of its own): every page at four widths, fails on console errors (CSP included), horizontal overflow, a video that will not play, an axe WCAG 2.2 AA violation, or missing link preview tags (og:url must equal the canonical, og.png must match its stated size). After a push: `node scripts/check-pages.mjs https://orgutveckling.se`.
 - A green check is not visual acceptance. Render stills (`npx remotion still src/index.ts Myter out/x.png --frame=N`) and look at them, and look at the page screenshots in `out/`.
 
 ## Learned the hard way
@@ -15,5 +15,5 @@ Read `C:\dev\CLAUDE.md` first. What this repo is: `CONTEXT.md`.
 - **Nobody has verified sound or motion by machine.** Stills and audio levels can be checked; how the music sounds and how the animation moves needs a human watching the mp4.
 - **Remotion's bundled ffmpeg is stripped**: no `volumedetect`, no `s16le` muxer. Decode to wav and measure in Python.
 - **Text speed**: the typewriter runs 2 characters per frame and a line needs to stay up after it finishes. The first cut was too fast to read; lengthen the beat before adding words.
-- **`preview.mjs` has absolute paths** to `C:/dev/video/docs` and `C:/dev/elwyndaz.github.io`.
+- **`preview.mjs` reads the main site** from `MAIN_SITE`, else a sibling `elwyndaz.github.io` checkout, else live `orgutveckling.se`. Its CSP is a copy of the zone's: change both together.
 - **Committing the mp4 is deliberate** (Pages serves `/docs`). Each re-render adds about 11 MB to git history, so render when the film is right, not per tweak.
