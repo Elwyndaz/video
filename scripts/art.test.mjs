@@ -101,14 +101,41 @@ test("person: breathing moves the body one pixel, offset per character, never wh
 });
 
 test("person: arms follow the pose", () => {
-  const arms = (pose, f, talk) => person("liv", { x: 0, dir: 1, pose, f, talk }).filter((r) => r[4] === "#33663a").map((r) => r.slice(0, 4).join(","));
-  assert.notDeepEqual(arms("cast", 0), arms("stand", 0), "cast raises an arm");
-  assert.deepEqual(arms("stand", 0, true), arms("cast", 0), "talking standing gestures on even 14-frame halves");
-  assert.deepEqual(arms("stand", 14, true), arms("stand", 14, false), "and rests on odd ones");
-  assert.notDeepEqual(arms("sit", 0, false), arms("sit", 0, true), "a sitter types until talking");
-  assert.equal(arms("power", 0).length, 2, "power pose: two raised arms");
-  assert.deepEqual(person("goran", { x: 0, dir: 1, pose: "stand", f: 0, phones: true }).filter((r) => r[4] === "#11141f").length,
+  const ARM = "#33663a";
+  const arms = (pose, f, talk) => person("liv", { x: 0, dir: 1, pose, f, talk }).filter((r) => r[4] === ARM);
+  assert.equal(arms("cast", 0).length, 3, "cast: one arm down, one raised in two pieces");
+  assert.equal(arms("stand", 0, true).length, 3, "talking standing gestures on even 14-frame halves");
+  assert.equal(arms("stand", 14, true).length, 2, "and rests on odd ones");
+  assert.equal(arms("stand", 28, true).length, 3, "every other half, not just the first");
+  assert.equal(arms("stand", 0, false).length, 2, "silent: both arms down");
+  assert.equal(arms("sit", 0, false).filter(([, , w, h]) => w > h).length, 1, "a silent sitter types: one forearm on the desk");
+  assert.equal(arms("sit", 0, true).filter(([, , w, h]) => w > h).length, 0, "and lets go to talk");
+  const power = arms("power", 0);
+  assert.equal(power.length, 2, "power pose: two arms");
+  for (const [, y, , h] of power) assert.ok(y + h <= FLOOR - 18, "both above the shoulders");
+  assert.equal(person("goran", { x: 0, dir: 1, pose: "stand", f: 0, phones: true }).filter((r) => r[4] === "#11141f").length,
     person("goran", { x: 0, dir: 1, pose: "stand", f: 0 }).filter((r) => r[4] === "#11141f").length + 1, "headphones replace the collar");
+});
+
+test("person: faces the way dir says", () => {
+  const reach = (dir) => person("nadja", { x: 100, dir, pose: "cast", f: 0 }).filter((r) => r[4] === "#f0c8a0").map(([x, , w]) => [x, x + w]).flat();
+  assert.equal(Math.max(...reach(1)), 111, "dir 1: the raised hand is to the right");
+  assert.equal(Math.min(...reach(-1)), 89, "dir -1: to the left");
+});
+
+test("person: only walking moves the legs, and the walk bobs", () => {
+  for (const pose of ["stand", "cast", "sit", "power"])
+    assert.deepEqual(person("nadja", { x: 0, dir: 1, pose, f: 0, step: 1 }), person("nadja", { x: 0, dir: 1, pose, f: 0, step: 0 }), `${pose}: step is ignored`);
+  const head = (step) => person("nadja", { x: 0, dir: 1, pose: "walk", f: 0, step }).find((r) => r[2] === 8 && r[3] === 8)[1];
+  assert.equal(head(1) - head(0), -1, "up one pixel mid-stride");
+  assert.equal(head(3) - head(2), -1);
+});
+
+test("person: a sitter has a chair back that turns with them", () => {
+  const back = (dir) => person("liv", { x: 100, dir, pose: "sit", f: 0 }).filter((r) => r[2] === 2 && r[3] === 12 && r[4] === "#11141f").map((r) => r[0]);
+  assert.deepEqual(back(1), [93]);
+  assert.deepEqual(back(-1), [105]);
+  assert.deepEqual(person("liv", { x: 100, dir: 1, pose: "stand", f: 0 }).filter((r) => r[2] === 2 && r[3] === 12), [], "no chair when standing");
 });
 
 test("office: whole pixels inside the world", () => {
@@ -130,6 +157,11 @@ test("office: the camera only moves the skyline, and the skyline stays inside th
   const moved = [...diff(a, b), ...diff(b, a)];
   assert.ok(moved.length > 0, "parallax moves something");
   for (const [x, , w] of moved) assert.ok(WINDOWS.some(([x0, x1]) => x >= x0 && x + w <= x1), `skyline pixel at ${x} inside a window`);
+  // The skyline is far away: it follows the camera at 0,6, so on screen it slides at 0,4 of the room.
+  const towers = (camX) => office(0, camX).filter((r) => r[4] === "#262d50" && r[1] + r[3] === 72).map(([x, , w, h]) => [x, w, h].join(","));
+  const at0 = new Set(towers(0));
+  const shifted = towers(50).filter((t) => at0.has(t.replace(/^-?\d+/, (x) => String(Number(x) - 30))));
+  assert.ok(shifted.length >= towers(50).length / 2, `${shifted.length} of ${towers(50).length} towers moved 30 for 50`);
 });
 
 test("office: the clock ticks every second and comes round in four", () => {
