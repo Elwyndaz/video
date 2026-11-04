@@ -21,6 +21,50 @@ Short films for Centrum för Organisationsutveckling, made in code, and the page
 | `scripts/preview.mjs`, `scripts/check-pages.mjs` | Local preview with the production CSP, and the page check |
 | `scripts/art.test.mjs` | `npm test`: invariants for `art.ts` and the text timing in `Film.tsx` |
 
+## Architecture
+
+Films are rendered locally and committed; GitHub Pages serves `docs/` as it is.
+
+```mermaid
+graph LR
+  subgraph LOCAL["Local machine"]
+    AUDIO[scripts/myter-audio.mjs]
+    PUB[public/film audio]
+    SRC[src/film script, Film, art]
+    REMOTION[Remotion render]
+    CHECK[check-pages.mjs and preview.mjs]
+  end
+
+  subgraph DOCS["docs/ committed"]
+    PAGE[film index.html]
+    MP4[mp4, poster.jpg, og.png]
+    REG[docs/index.html register]
+  end
+
+  PAGES[GitHub Pages orgutveckling.se/video]
+  MAIN[Main site /style.css and /site.js]
+  USER[Browser]
+  NEXT[Research summary and courses]
+
+  AUDIO --> PUB
+  PUB --> REMOTION
+  SRC --> REMOTION
+  REMOTION --> MP4
+  PAGE --> CHECK
+  DOCS -->|git push to main| PAGES
+  USER --> PAGES
+  PAGES --> MAIN
+  PAGES --> NEXT
+```
+
+## Stack
+
+- Films: Remotion 4 with React 19, rendered to self-hosted mp4
+- Pages: static HTML in `docs/`, borrowing the main site's CSS and JS by absolute path
+- Code: TypeScript, Node scripts for audio, preview and page check
+- Tests: `npm run check` (`tsc`) and `npm run check:pages` with Playwright
+- Hosting: GitHub Pages from `main` `/docs`, orgutveckling.se/video
+
 ## Conventions
 
 - **The pages borrow the main site.** `/style.css`, `/site.js`, fonts, header, footer and the closing "Begär förslag" band come from `elwyndaz.github.io` by absolute path on the same domain. Design rules live in that repo's `CONTEXT.md` and are not repeated here. Header, nav and footer markup is copied, so a nav change there must be copied here.
