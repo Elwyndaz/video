@@ -19,6 +19,7 @@ Short films for Centrum för Organisationsutveckling, made in code, and the page
 | `docs/index.html` | Register of all films |
 | `docs/video.css` | Only what the film pages add to the main site's design system |
 | `scripts/preview.mjs`, `scripts/check-pages.mjs` | Local preview with the production CSP, and the page check |
+| `scripts/art.test.mjs` | `npm test`: invariants for `art.ts` and the text timing in `Film.tsx` |
 
 ## Conventions
 
@@ -47,6 +48,7 @@ Short films for Centrum för Organisationsutveckling, made in code, and the page
 - WCAG 2.2 AA (automated): 2026-11-04, needs-review, axe 4.14.0 0 violations on orgutveckling.se/video (2 pages, 4 widths each, via check-pages); manual keyboard pass not done
 - UX (automated): 2026-10-30, warn, 4 of 6 script checks pass on orgutveckling.se/video (no --interact): warn Fitts targets; warn Von Restorff primary; screenshot review not done
 - OWASP Top 10: 2026-10-30, pass, code review (Mistral Large; Claude read only the verdict line, lows unread), no live probe; 0 high, 0 medium reported
+- Mutation: 2026-11-04, Stryker 56,06 % on src/myter/art.ts (no tests before), 312 survivors reviewed: pixel coordinates, colours and per-character details only a still can judge
 
 ## Compute
 Vart ledig kvot kan gå. Läses av fliken Compute i elwyn-dash och `tools/compute-queue.mjs` i aifabriken.

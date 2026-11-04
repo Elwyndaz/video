@@ -1,0 +1,16 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "_comment": "Mutationstest av bilden i art.ts (audit-kolumnen Mutation). Kör: npm i --no-save @stryker-mutator/core@9 && npx stryker run. Film.tsx går inte att ladda i Node och script.ts är bara text, så de muteras inte. TypeScript 7 saknar API:t Stryker använder för tsconfig, därför pekar tsconfigFile på en fil som inte finns.",
+  "testRunner": "command",
+  "commandRunner": { "command": "npm test" },
+  "coverageAnalysis": "off",
+  "mutate": ["src/myter/art.ts"],
+  "tsconfigFile": "tsconfig.stryker-none.json",
+  "ignorePatterns": ["docs", "public", "out", "reports"],
+  "reporters": ["clear-text", "progress", "html", "json"],
+  "htmlReporter": { "fileName": "reports/mutation/mutation.html" },
+  "jsonReporter": { "fileName": "reports/mutation/mutation.json" },
+  "concurrency": 4,
+  "timeoutMS": 10000,
+  "tempDirName": ".stryker-tmp"
+}

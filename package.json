@@ -5,6 +5,7 @@
   "scripts": {
     "prep": "node scripts/myter-audio.mjs",
     "check": "tsc --noEmit",
+    "test": "node --no-warnings --test scripts/art.test.mjs",
     "preview": "node scripts/preview.mjs",
     "check:pages": "node scripts/check-pages.mjs",
     "studio": "npm run prep && remotion studio src/index.ts",
