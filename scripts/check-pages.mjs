@@ -3,7 +3,8 @@
 import { chromium } from "playwright";
 
 const base = process.argv[2] ?? "http://127.0.0.1:4391";
-const browser = await chromium.launch();
+// CHROMIUM points at a browser binary when the installed playwright has none of its own.
+const browser = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {});
 let failed = 0;
 // Add each new film page here.
 for (const path of ["/video/myter/", "/video/"]) {
