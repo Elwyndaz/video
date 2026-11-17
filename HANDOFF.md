@@ -4,10 +4,12 @@ status: active
 currentGoal: "Patrik shares the Myter film; he has watched it and approved it."
 nextAction: "Patrik runs https://www.linkedin.com/post-inspector/ on the URL before posting."
 blockers: []
-reviewedAt: 2026-10-17
+reviewedAt: 2026-11-17
 ---
 
 # Handoff
+
+**2026-11-17, dependency round:** remotion and @remotion/* 4.0.536 to 4.0.544 (10 high to 0, zod advisory), playwright 1.65 and in-range updates. `tsc` green, `remotion compositions` lists Myter, `check-pages.mjs` against live passed 8 of 8. Film not re-rendered.
 
 Live since 2026-10-09: `https://orgutveckling.se/video/` and `https://orgutveckling.se/video/myter/`. GitHub Pages serves `main` `/docs` of `Elwyndaz/video`. `node scripts/check-pages.mjs https://orgutveckling.se` passed 8 of 8 after the first deploy.
 
