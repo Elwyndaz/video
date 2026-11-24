@@ -1,4 +1,4 @@
-// Verdict for a /video/ page: no console errors, no horizontal overflow at four widths, the video can play, no axe WCAG 2.2 AA violations, link preview tags and image in place. Screenshots to out/.
+// Verdict for a /video/ page: header, menus and footer links match the main site, no console errors, no horizontal overflow at four widths, the video can play, no axe WCAG 2.2 AA violations, link preview tags and image in place. Screenshots to out/.
 // Usage: npm run preview (in another terminal), then npm run check:pages. Against live: node scripts/check-pages.mjs https://orgutveckling.se
 import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
@@ -10,6 +10,12 @@ const base = process.argv[2] ?? "http://127.0.0.1:4391";
 // CHROMIUM points at a browser binary when the installed playwright has none of its own.
 const browser = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {});
 let failed = 0;
+// Header, menus and footer are copied from the main site; a nav change there must reach these pages. Compared as href + text of every link.
+const chrome = (p) => p.evaluate(() => [...document.querySelectorAll(".site-header a, .mobile-nav a, .site-footer a")].map((a) => `${a.getAttribute("href")} ${a.textContent.trim()}`));
+const home = await browser.newPage();
+await home.goto(base + "/", { waitUntil: "domcontentloaded" });
+const mainChrome = await chrome(home);
+await home.close();
 // Add each new film page here.
 for (const path of ["/video/myter/", "/video/"]) {
   for (const width of [320, 390, 768, 1440]) {
@@ -48,6 +54,11 @@ for (const path of ["/video/myter/", "/video/"]) {
       if (img !== `${meta.w}x${meta.h}`) og.push(`og:image ${img}, tags say ${meta.w}x${meta.h}`);
     }
     if (og.length) errors.push(...og);
+    if (width === 320) {
+      const mine = await chrome(page);
+      const missing = mainChrome.filter((l) => !mine.includes(l)), extra = mine.filter((l) => !mainChrome.includes(l));
+      if (missing.length || extra.length) errors.push(`chrome differs from main site: ${[...missing.map((l) => "missing " + l), ...extra.map((l) => "extra " + l)].join(", ")}`);
+    }
     const bad = res.status() !== 200 || over > 0 || errors.length || video.startsWith("stuck") || axe.length;
     if (bad) failed++;
     console.log(`${bad ? "FAIL" : "ok  "} ${path} @${width}: status ${res.status()}, overflow ${over}, video ${video}, axe ${axe.length ? axe.join(" ") : 0}${errors.length ? ", errors: " + errors.slice(0, 3).join(" | ") : ""}`);
