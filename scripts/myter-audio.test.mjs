@@ -3,12 +3,14 @@
 // Run: npm test (it rebuilds public/myter, like npm run prep).
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { readFileSync, rmSync } from "node:fs";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { beats } from "../src/myter/script.ts";
 
 const SR = 44100;
+// Clear first, so the tests read what this run wrote and not files left by an earlier one.
+rmSync(new URL("../public/myter", import.meta.url), { recursive: true, force: true });
 execFileSync(process.execPath, [fileURLToPath(new URL("myter-audio.mjs", import.meta.url))]);
 
 function wav(name) {
@@ -108,4 +110,48 @@ test("talk blips: one every fifteenth of a second, Nadja's higher than the other
 
 test("walk: seven footsteps", () => {
   assert.equal(onsets(wav("walk.wav")), 7);
+});
+
+// Pitch from zero crossings: two per period. Times in seconds.
+const at = (s) => Math.round(s * SR);
+const hzIn = (w, from, to) => crossings(w, at(from), at(to)) / 2 / (to - from);
+const near = (got, want, what) => assert.ok(Math.abs(got - want) / want < 0.06, `${what}: ${got.toFixed(0)} Hz, want ${want}`);
+const positive = (w, from, to) => {
+  let k = 0;
+  for (let i = at(from); i < at(to); i++) if (w.at(i) > 0) k++;
+  return k / (at(to) - at(from));
+};
+
+test("pitch: the win jingle opens on C5, the ping on 1760 Hz, footsteps alternate low and high", () => {
+  near(hzIn(wav("win.wav"), 0.005, 0.09), 523.25, "win first note");
+  near(hzIn(wav("ping.wav"), 0.005, 0.08), 1760, "ping");
+  const walk = wav("walk.wav");
+  near(hzIn(walk, 0.002, 0.04), 180, "step 1");
+  near(hzIn(walk, 0.202, 0.24), 240, "step 2");
+});
+
+test("sweeps: the attack rises, the nope slide falls", () => {
+  const attack = wav("attack.wav");
+  assert.ok(hzIn(attack, 0.15, 0.2) > 2 * hzIn(attack, 0, 0.05), "attack rises");
+  const nope = wav("nope.wav");
+  assert.ok(hzIn(nope, 0.5, 0.6) > 1.15 * hzIn(nope, 0.9, 1.0), "nope falls");
+});
+
+test("wave shapes: square at 25 % duty, triangle centred on zero", () => {
+  const sq = positive(wav("ping.wav"), 0.005, 0.08);
+  assert.ok(Math.abs(sq - 0.25) < 0.05, `square ${sq}`);
+  const tri = positive(wav("walk.wav"), 0.002, 0.04);
+  assert.ok(Math.abs(tri - 0.5) < 0.1, `triangle ${tri}`);
+});
+
+test("envelope: every file starts without a click, a held note decays", () => {
+  for (const name of Object.keys(LENGTHS)) {
+    const w = wav(name);
+    assert.equal(w.at(0), 0, name);
+    assert.ok(Math.abs(w.at(1)) < 1000, `${name}: ${w.at(1)} at sample 1`);
+  }
+  const win = wav("win.wav");
+  const early = loud(win, at(0.5), at(0.6));
+  const late = loud(win, at(1.3), at(1.4));
+  assert.ok(late < early / 4, `chord ${early} then ${late}`);
 });
