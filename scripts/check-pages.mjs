@@ -1,4 +1,4 @@
-// Verdict for a /video/ page: header, menus and footer links match the main site, no console errors, no horizontal overflow at four widths, the video can play, no axe WCAG 2.2 AA violations, link preview tags and image in place. Screenshots to out/.
+// Verdict for a /video/ page: header, menus, footer links and the borrowed CSS/JS versions match the main site, claim counts match /forskning/, no console errors, no horizontal overflow at four widths, the video can play, no axe WCAG 2.2 AA violations, link preview tags and image in place. Screenshots to out/.
 // Usage: npm run preview (in another terminal), then npm run check:pages. Against live: node scripts/check-pages.mjs https://orgutveckling.se
 import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
@@ -11,10 +11,17 @@ const base = process.argv[2] ?? "http://127.0.0.1:4391";
 const browser = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {});
 let failed = 0;
 // Header, menus and footer are copied from the main site; a nav change there must reach these pages. Compared as href + text of every link.
-const chrome = (p) => p.evaluate(() => [...document.querySelectorAll(".site-header a, .mobile-nav a, .site-footer a")].map((a) => `${a.getAttribute("href")} ${a.textContent.trim()}`));
+// The borrowed /style.css and /site.js are compared too: the main site busts caches with ?v=, and an unversioned copy is served stale from the edge for hours.
+const chrome = (p) => p.evaluate(() => [
+  ...[...document.querySelectorAll(".site-header a, .mobile-nav a, .site-footer a")].map((a) => `${a.getAttribute("href")} ${a.textContent.trim()}`),
+  ...[...document.querySelectorAll('link[href^="/style.css"], script[src^="/site.js"]')].map((e) => `asset ${e.getAttribute("href") ?? e.getAttribute("src")}`),
+]);
 const home = await browser.newPage();
 await home.goto(base + "/", { waitUntil: "domcontentloaded" });
 const mainChrome = await chrome(home);
+// "N påståenden" on a film page must be the count the research summary states in its ingress.
+await home.goto(base + "/forskning/", { waitUntil: "domcontentloaded" });
+const claims = await home.evaluate(() => document.querySelector(".ingress")?.textContent.match(/^([\d\s]+) påståenden/)?.[1].replace(/\s/g, "") ?? "none");
 await home.close();
 // Add each new film page here.
 for (const path of ["/video/myter/", "/video/"]) {
@@ -54,6 +61,8 @@ for (const path of ["/video/myter/", "/video/"]) {
       if (img !== `${meta.w}x${meta.h}`) og.push(`og:image ${img}, tags say ${meta.w}x${meta.h}`);
     }
     if (og.length) errors.push(...og);
+    const counts = await page.evaluate(() => [...document.querySelector("main").textContent.matchAll(/(\d[\d\s]*?) påståenden/g)].map((m) => m[1].replace(/\s/g, "")));
+    for (const n of new Set(counts)) if (n !== claims) errors.push(`says ${n} påståenden, /forskning/ says ${claims}`);
     if (width === 320) {
       const mine = await chrome(page);
       const missing = mainChrome.filter((l) => !mine.includes(l)), extra = mine.filter((l) => !mainChrome.includes(l));

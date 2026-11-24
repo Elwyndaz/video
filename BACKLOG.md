@@ -12,6 +12,8 @@
 
 ## Built
 
+- 2026-11-24 bug hunt: onward row count 230 to 245 påståenden, borrowed `/style.css` and `/site.js` now carry the main site's `?v=`; `check:pages` catches both drifts (failed on live before, see HANDOFF).
+
 - Remotion project with the `Myter` film (81,6 s, 1080×1080), synthesised score and cues.
 - `/video/myter/` page: self-hosted video, film and heading in one centred column, onward rows to research and courses, closing request band.
 - `/video/` register page.
