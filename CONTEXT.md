@@ -67,7 +67,7 @@ graph LR
 
 ## Conventions
 
-- **The pages borrow the main site.** `/style.css`, `/site.js`, fonts, header, footer and the closing "Begär förslag" band come from `elwyndaz.github.io` by absolute path on the same domain. Design rules live in that repo's `CONTEXT.md` and are not repeated here. Header, nav and footer markup is copied, so a nav change there must be copied here.
+- **The pages borrow the main site.** `/style.css`, `/site.js`, fonts, header, footer and the closing "Begär förslag" band come from `elwyndaz.github.io` by absolute path on the same domain. Design rules live in that repo's `CONTEXT.md` and are not repeated here. Header, nav and footer markup is copied, so a nav change there must be copied here: `check:pages` fails when the links in header, menus or footer differ from the main site's `/`.
 - **CSP is set on the Cloudflare zone**, not here: `default-src 'self'`, no external embeds. Video is self-hosted for that reason. No YouTube or Vimeo iframes, no inline scripts.
 - **Film pages are `noindex, follow`.** They are landing pages for shared links, not search content, and are not in the main site's sitemap.
 - **URLs are folders** (`/video/myter/`), never renamed after sharing: GitHub Pages cannot redirect.

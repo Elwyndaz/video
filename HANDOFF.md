@@ -9,6 +9,8 @@ reviewedAt: 2026-11-24
 
 # Handoff
 
+**2026-11-24, feature pass (branch `feat/2026-11-24`, worktree `C:dev_wtideo-1124f`, complete):** the footer on `/video/` and `/video/myter/` lacked the main site's "Podd" link (`/podcast.html`), added. `check:pages` now compares every header, menu and footer link with the main site's `/` and fails on a difference; against live before the fix it failed on exactly that link, locally after it 8 of 8. `npm test` 36 of 36, `tsc` green. The open BACKLOG items all need Patrik (login or his call).
+
 **2026-11-24, deep pass (branch `deep/2026-11-24`, worktree `C:\dev\video-deep-1124`, complete):** tests for the two untested scripts. `preview.mjs`: a malformed URL threw inside the request handler and took the server down; now a 400 and it keeps serving (test first), and `PORT=` moves it. Stryker 100 % on `preview.mjs`, 64,45 % on `myter-audio.mjs`; the audio test now deletes `public/myter` first, because it had been passing on files left by an earlier run. `npm test` 36 of 36, `tsc` green. UX script against live: 4 of 6, both warns in the chrome copied from the main site (BACKLOG P3). No backlog item was agent-doable: the rest are Patrik's calls. No page or film change, nothing to deploy.
 
 **2026-11-24, backlog sweep (branch `sweep/2026-11-24`, worktree `C:\dev\video-sweep-1124`, complete):** no agent-doable P0-P2 item; the only open P1 (LinkedIn Post Inspector) needs Patrik's login. Rechecked: `tsc` green, `npm test` 19 of 19, `npm audit` 0, Dependabot 0 open, `check-pages.mjs` against live 8 of 8. Stale audit lines in `CONTEXT.md` (npm audit and Dependabot still said fail) brought up to date. No code or film change.
