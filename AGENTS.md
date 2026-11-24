@@ -5,8 +5,9 @@ Read `C:\dev\CLAUDE.md` first. What this repo is: `CONTEXT.md`.
 ## Verify
 
 - `npm run check`: type-check.
+- `npm test`: Node tests for `art.ts`, the preview server and the wav files (rebuilds `public/myter`, about 3 s).
 - `npm run render`: rebuilds audio, renders `docs/myter/myter.mp4`.
-- `npm run preview` in one terminal, `npm run check:pages` in another (`CHROMIUM=/path/to/chromium` if playwright has no browser of its own): every page at four widths, fails on console errors (CSP included), horizontal overflow, a video that will not play, an axe WCAG 2.2 AA violation, or missing link preview tags (og:url must equal the canonical, og.png must match its stated size). After a push: `node scripts/check-pages.mjs https://orgutveckling.se`.
+- `npm run preview` (`PORT=` to move it off 4391) in one terminal, `npm run check:pages` in another (`CHROMIUM=/path/to/chromium` if playwright has no browser of its own): every page at four widths, fails on console errors (CSP included), horizontal overflow, a video that will not play, an axe WCAG 2.2 AA violation, or missing link preview tags (og:url must equal the canonical, og.png must match its stated size). After a push: `node scripts/check-pages.mjs https://orgutveckling.se`.
 - A green check is not visual acceptance. Render stills (`npx remotion still src/index.ts Myter out/x.png --frame=N`) and look at them, and look at the page screenshots in `out/`.
 
 ## Learned the hard way

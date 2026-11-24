@@ -9,6 +9,8 @@ reviewedAt: 2026-11-24
 
 # Handoff
 
+**2026-11-24, deep pass (branch `deep/2026-11-24`, worktree `C:\dev\video-deep-1124`, complete):** tests for the two untested scripts. `preview.mjs`: a malformed URL threw inside the request handler and took the server down; now a 400 and it keeps serving (test first), and `PORT=` moves it. Stryker 100 % on `preview.mjs`, 64,45 % on `myter-audio.mjs`; the audio test now deletes `public/myter` first, because it had been passing on files left by an earlier run. `npm test` 36 of 36, `tsc` green. UX script against live: 4 of 6, both warns in the chrome copied from the main site (BACKLOG P3). No backlog item was agent-doable: the rest are Patrik's calls. No page or film change, nothing to deploy.
+
 **2026-11-24, backlog sweep (branch `sweep/2026-11-24`, worktree `C:\dev\video-sweep-1124`, complete):** no agent-doable P0-P2 item; the only open P1 (LinkedIn Post Inspector) needs Patrik's login. Rechecked: `tsc` green, `npm test` 19 of 19, `npm audit` 0, Dependabot 0 open, `check-pages.mjs` against live 8 of 8. Stale audit lines in `CONTEXT.md` (npm audit and Dependabot still said fail) brought up to date. No code or film change.
 
 **2026-11-17, dependency round:** remotion and @remotion/* 4.0.536 to 4.0.544 (10 high to 0, zod advisory), playwright 1.65 and in-range updates. `tsc` green, `remotion compositions` lists Myter, `check-pages.mjs` against live passed 8 of 8. Film not re-rendered.
