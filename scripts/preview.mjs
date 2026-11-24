@@ -23,8 +23,14 @@ async function load(path) {
   return Buffer.from(await r.arrayBuffer());
 }
 
-createServer(async (req, res) => {
-  let path = decodeURIComponent(new URL(req.url, "http://x").pathname);
+const server = createServer(async (req, res) => {
+  let path;
+  // A malformed escape (%E0) throws; uncaught it would take the whole server down.
+  try {
+    path = decodeURIComponent(new URL(req.url, "http://x").pathname);
+  } catch {
+    return res.writeHead(400).end("400");
+  }
   if (path === "/video") path = "/video/";
   if (path.endsWith("/")) path += "index.html";
   try {
@@ -44,4 +50,5 @@ createServer(async (req, res) => {
   } catch {
     res.writeHead(404).end("404");
   }
-}).listen(4391, "127.0.0.1", () => console.log(`preview on http://127.0.0.1:4391/video/myter/ (main site: ${mainSite ?? live})`));
+// PORT=0 picks a free port (the tests use it).
+}).listen(Number(process.env.PORT ?? 4391), "127.0.0.1", () => console.log(`preview on http://127.0.0.1:${server.address().port}/video/myter/ (main site: ${mainSite ?? live})`));
