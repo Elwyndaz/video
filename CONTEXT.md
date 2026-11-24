@@ -86,10 +86,10 @@ graph LR
 ## Audits
 - Secrets: 2026-10-30, pass, gitleaks 0 findings in 10 commits
 - Actions: 2026-10-30, n/a, no GitHub Actions workflows
-- npm audit: 2026-10-30, fail, 0 critical 10 high 0 moderate in production, 0 in the dev chain
-- Dependabot: 2026-10-30, fail, 5 open alerts: 1 high 2 medium 2 low runtime, 0 dev (fast-uri, zod)
+- npm audit: 2026-11-24, pass, 0 vulnerabilities in production and dev (after remotion 4.0.544, 2026-11-17)
+- Dependabot: 2026-11-24, pass, 0 open alerts
 - Headers (automated): 2026-10-30, pass, 6 of 6 on orgutveckling.se/video, Observatory A+ on orgutveckling.se
-- WCAG 2.2 AA (automated): 2026-11-04, needs-review, axe 4.14.0 0 violations on orgutveckling.se/video (2 pages, 4 widths each, via check-pages); manual keyboard pass not done
+- WCAG 2.2 AA (automated): 2026-11-24, needs-review, axe 0 violations on orgutveckling.se/video (2 pages, 4 widths each, via check-pages, 8 of 8 ok); manual keyboard pass not done
 - UX (automated): 2026-10-30, warn, 4 of 6 script checks pass on orgutveckling.se/video (no --interact): warn Fitts targets; warn Von Restorff primary; screenshot review not done
 - OWASP Top 10: 2026-10-30, pass, code review (Mistral Large; Claude read only the verdict line, lows unread), no live probe; 0 high, 0 medium reported
 - Mutation: 2026-11-04, Stryker 56,06 % on src/myter/art.ts (no tests before), 312 survivors reviewed: pixel coordinates, colours and per-character details only a still can judge
