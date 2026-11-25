@@ -6,12 +6,14 @@
 
 ## Later
 
+- [ ] `[P3]` Pages say "ca en minut" (`docs/index.html` register, `docs/myter/index.html` eyebrow, meta description, video aria-label) but the film is 81,6 s, and the player shows 1:21: Patrik's call on wording.
 - [ ] `[P3]` MBTI flip (ENFP to INTJ changes three letters, a one-letter flip is the typical case): Patrik's call on wording.
 - [ ] `[P3]` Link to `/video/` from the main site, if the films should be findable without a shared link. Pages are `noindex` today.
 - [ ] `[P3]` UX audit 2026-11-24, both warns sit in the chrome copied from the main site, so they are fixed there first and copied here (Patrik's call, design lives in `elwyndaz.github.io`): Fitts, logo link 24 px, "Öppna meny" 32 px, "Stäng meny" 28 px, footer links 19 to 22 px (spaced, pass WCAG 2.5.8); Von Restorff, three primary-styled actions per page (`.mobile-nav-cta`, `.btn-primary` "Begär förslag" in the closing band, `.cta-email`), on `/video/` and `/video/myter/`.
 
 ## Built
 
+- 2026-11-24 bug hunt 2: Swedish `docs/404.html` for missing paths under `/video/` (was GitHub's English page, overflowing at 320), `check:pages` walks it and failed on live before; `preview.mjs` keeps `?v=` on live fetches and reads `/forskning/` live (see HANDOFF).
 - 2026-11-24 bug hunt: onward row count 230 to 245 påståenden, borrowed `/style.css` and `/site.js` now carry the main site's `?v=`; `check:pages` catches both drifts (failed on live before, see HANDOFF).
 
 - Remotion project with the `Myter` film (81,6 s, 1080×1080), synthesised score and cues.
