@@ -17,6 +17,7 @@ Short films for Centrum för Organisationsutveckling, made in code, and the page
 | `scripts/<film>-audio.mjs` | Synthesises music and cues into `public/<film>/` (gitignored, rebuilt by `npm run prep`) |
 | `docs/<film>/` | `index.html`, the rendered `mp4`, `poster.jpg`, `og.png`. Committed: this is what is served |
 | `docs/index.html` | Register of all films |
+| `docs/404.html` | Copy of the main site's `404.html`: Pages serves it for any missing path under `/video/` (without it, GitHub's English page). Copy it again when the main site's one changes; `check:pages` fails on chrome drift |
 | `docs/video.css` | Only what the film pages add to the main site's design system |
 | `scripts/preview.mjs`, `scripts/check-pages.mjs` | Local preview with the production CSP, and the page check |
 | `scripts/*.test.mjs` | `npm test`: invariants for `art.ts` and the text timing in `Film.tsx`, the preview server (paths, CSP, byte ranges), and the synthesised wav files (format, length, the holes where the stamps land) |

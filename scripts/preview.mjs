@@ -1,5 +1,5 @@
 // Local preview: /video/* from docs/, everything else from the main site repo, with the zone's CSP.
-// The main site is read from MAIN_SITE, else a sibling elwyndaz.github.io checkout; without one it is fetched from orgutveckling.se.
+// The main site is read from MAIN_SITE, else a sibling elwyndaz.github.io checkout; without one it is fetched from orgutveckling.se. /forskning/ (its own repo) is always fetched live.
 import { createServer } from "node:http";
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
@@ -17,7 +17,8 @@ const csp = "default-src 'self'; script-src 'self' https://static.cloudflareinsi
 
 async function load(path) {
   if (path.startsWith("/video/")) return readFile(join(docs, normalize(path.slice(6))));
-  if (mainSite) return readFile(join(mainSite, normalize(path)));
+  // /forskning/ is its own Pages project, not in the main site repo; check:pages reads its claim count.
+  if (mainSite && !path.startsWith("/forskning/")) return readFile(join(mainSite, normalize(path)));
   const r = await fetch(live + path);
   if (!r.ok) throw new Error(String(r.status));
   return Buffer.from(await r.arrayBuffer());
@@ -48,6 +49,8 @@ const server = createServer(async (req, res) => {
     res.writeHead(200, { ...head, "content-length": data.length });
     res.end(data);
   } catch {
+    // Pages serves the project's own 404.html for a missing path under /video/.
+    if (path.startsWith("/video/")) return res.writeHead(404, { "content-type": types[".html"], "content-security-policy": csp }).end(await readFile(join(docs, "404.html")));
     res.writeHead(404).end("404");
   }
 // PORT=0 picks a free port (the tests use it).

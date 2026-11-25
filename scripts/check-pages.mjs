@@ -23,12 +23,13 @@ const mainChrome = await chrome(home);
 await home.goto(base + "/forskning/", { waitUntil: "domcontentloaded" });
 const claims = await home.evaluate(() => document.querySelector(".ingress")?.textContent.match(/^([\d\s]+) påståenden/)?.[1].replace(/\s/g, "") ?? "none");
 await home.close();
-// Add each new film page here.
-for (const path of ["/video/myter/", "/video/"]) {
+// Add each new film page here. A mistyped shared link lands on docs/404.html: Swedish, the site chrome, status 404, no link preview.
+for (const [path, status] of [["/video/myter/", 200], ["/video/", 200], ["/video/finns-inte/", 404]]) {
   for (const width of [320, 390, 768, 1440]) {
     const page = await browser.newPage({ viewport: { width, height: 900 } });
     const errors = [];
-    page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+    // On the 404 page the browser logs the page's own 404 status; that one is expected.
+    page.on("console", (m) => m.type() === "error" && !(status === 404 && m.location().url === base + path) && errors.push(m.text()));
     page.on("pageerror", (e) => errors.push(String(e)));
     // The browser aborts and re-requests media while seeking; that is not a failure.
     page.on("requestfailed", (r) => r.failure()?.errorText !== "net::ERR_ABORTED" && errors.push(`failed ${r.url()}`));
@@ -53,22 +54,29 @@ for (const path of ["/video/myter/", "/video/"]) {
       const m = (k) => document.querySelector(`meta[property="${k}"], meta[name="${k}"]`)?.content ?? "";
       return { url: m("og:url"), canonical: document.querySelector('link[rel="canonical"]')?.href ?? "", image: m("og:image"), w: m("og:image:width"), h: m("og:image:height"), need: ["og:title", "og:description", "og:image:alt", "twitter:card", "twitter:image"].filter((k) => !m(k)) };
     });
-    const og = [...meta.need.map((k) => `no ${k}`)];
-    if (!meta.url || meta.url !== meta.canonical) og.push(`og:url ${meta.url} is not canonical ${meta.canonical}`);
-    if (!meta.image.startsWith("https://")) og.push("og:image not absolute");
-    else {
-      const img = await page.evaluate(async (src) => new Promise((done) => { const i = new Image(); i.onload = () => done(`${i.naturalWidth}x${i.naturalHeight}`); i.onerror = () => done("missing"); i.src = src; }), new URL(meta.image).pathname);
-      if (img !== `${meta.w}x${meta.h}`) og.push(`og:image ${img}, tags say ${meta.w}x${meta.h}`);
+    const og = [];
+    // The 404 page is never shared, so it carries no link preview; it must still say in Swedish what happened.
+    if (status === 404) {
+      const title = await page.title();
+      if (!title.startsWith("Sidan finns inte")) og.push(`title ${title}`);
+    } else {
+      og.push(...meta.need.map((k) => `no ${k}`));
+      if (!meta.url || meta.url !== meta.canonical) og.push(`og:url ${meta.url} is not canonical ${meta.canonical}`);
+      if (!meta.image.startsWith("https://")) og.push("og:image not absolute");
+      else {
+        const img = await page.evaluate(async (src) => new Promise((done) => { const i = new Image(); i.onload = () => done(`${i.naturalWidth}x${i.naturalHeight}`); i.onerror = () => done("missing"); i.src = src; }), new URL(meta.image).pathname);
+        if (img !== `${meta.w}x${meta.h}`) og.push(`og:image ${img}, tags say ${meta.w}x${meta.h}`);
+      }
     }
     if (og.length) errors.push(...og);
-    const counts = await page.evaluate(() => [...document.querySelector("main").textContent.matchAll(/(\d[\d\s]*?) påståenden/g)].map((m) => m[1].replace(/\s/g, "")));
+    const counts = await page.evaluate(() => [...(document.querySelector("main")?.textContent ?? "").matchAll(/(\d[\d\s]*?) påståenden/g)].map((m) => m[1].replace(/\s/g, "")));
     for (const n of new Set(counts)) if (n !== claims) errors.push(`says ${n} påståenden, /forskning/ says ${claims}`);
     if (width === 320) {
       const mine = await chrome(page);
       const missing = mainChrome.filter((l) => !mine.includes(l)), extra = mine.filter((l) => !mainChrome.includes(l));
       if (missing.length || extra.length) errors.push(`chrome differs from main site: ${[...missing.map((l) => "missing " + l), ...extra.map((l) => "extra " + l)].join(", ")}`);
     }
-    const bad = res.status() !== 200 || over > 0 || errors.length || video.startsWith("stuck") || axe.length;
+    const bad = res.status() !== status || over > 0 || errors.length || video.startsWith("stuck") || axe.length;
     if (bad) failed++;
     console.log(`${bad ? "FAIL" : "ok  "} ${path} @${width}: status ${res.status()}, overflow ${over}, video ${video}, axe ${axe.length ? axe.join(" ") : 0}${errors.length ? ", errors: " + errors.slice(0, 3).join(" | ") : ""}`);
     if (width === 390 || width === 1440) {

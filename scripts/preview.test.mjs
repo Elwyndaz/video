@@ -68,6 +68,14 @@ test("missing files and paths that climb out of the roots are 404", async () => 
   for (const path of ["/nope.css", "/video/nope/", "/..%2Fsecret.txt", "/video/..%2F..%2Fpackage.json"]) assert.equal((await get(path)).status, 404, path);
 });
 
+test("a missing /video/ path gets docs/404.html, as Pages serves it", async () => {
+  const r = await get("/video/myte");
+  assert.equal(r.status, 404);
+  assert.equal(r.headers.get("content-type"), "text/html; charset=utf-8");
+  assert.deepEqual(Buffer.from(await r.arrayBuffer()), docs("404.html"));
+  assert.equal(await (await get("/nope.css")).text(), "404", "outside /video/ the main site's own 404 applies");
+});
+
 test("a malformed URL is a 400, and the server keeps running", async () => {
   assert.equal((await get("/%E0%A4%A")).status, 400);
   assert.equal((await get("/a.css")).status, 200);
