@@ -59,6 +59,8 @@ for (const [path, status] of [["/video/myter/", 200], ["/video/", 200], ["/video
     if (status === 404) {
       const title = await page.title();
       if (!title.startsWith("Sidan finns inte")) og.push(`title ${title}`);
+      // Everyone on a 404 under /video/ came for a film (a link pasted with a trailing ")", a retyped "Myter").
+      if (!(await page.locator("main a[href='/video/']").count())) og.push("no link to /video/");
     } else {
       og.push(...meta.need.map((k) => `no ${k}`));
       if (!meta.url || meta.url !== meta.canonical) og.push(`og:url ${meta.url} is not canonical ${meta.canonical}`);
