@@ -15,11 +15,12 @@ const types = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": 
 // Copied from the Cloudflare zone (curl -sI https://orgutveckling.se/video/). Keep it identical, or the check passes things production blocks.
 const csp = "default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://cloudflareinsights.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'";
 
-async function load(path) {
+async function load(path, search = "") {
   if (path.startsWith("/video/")) return readFile(join(docs, normalize(path.slice(6))));
   // /forskning/ is its own Pages project, not in the main site repo; check:pages reads its claim count.
   if (mainSite && !path.startsWith("/forskning/")) return readFile(join(mainSite, normalize(path)));
-  const r = await fetch(live + path);
+  // Keep ?v=: the edge serves an unversioned /style.css stale for hours.
+  const r = await fetch(live + path + search);
   if (!r.ok) throw new Error(String(r.status));
   return Buffer.from(await r.arrayBuffer());
 }
@@ -35,7 +36,7 @@ const server = createServer(async (req, res) => {
   if (path === "/video") path = "/video/";
   if (path.endsWith("/")) path += "index.html";
   try {
-    const data = await load(path);
+    const data = await load(path, new URL(req.url, "http://x").search);
     const head = { "content-type": types[extname(path)] ?? "application/octet-stream", "content-security-policy": csp, "accept-ranges": "bytes" };
     // Byte ranges, so the video can seek like it does on Pages.
     const range = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range ?? "");
