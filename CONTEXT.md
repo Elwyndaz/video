@@ -15,7 +15,7 @@ Short films for Centrum för Organisationsutveckling, made in code, and the page
 | `src/Root.tsx` | One `Composition` per film |
 | `src/<film>/` | The film: `script.ts` (all text), `Film.tsx` (timing, layout), `art.ts` (drawing) |
 | `scripts/<film>-audio.mjs` | Synthesises music and cues into `public/<film>/` (gitignored, rebuilt by `npm run prep`) |
-| `docs/<film>/` | `index.html`, the rendered `mp4`, `poster.jpg`, `og.png`. Committed: this is what is served |
+| `docs/<film>/` | `index.html`, the rendered `mp4`, `poster.webp` (the page's poster, preloaded: it is the LCP; `poster.jpg` is the older copy), `og.png`. Committed: this is what is served |
 | `docs/index.html` | Register of all films |
 | `docs/404.html` | Copy of the main site's `404.html`: Pages serves it for any missing path under `/video/` (without it, GitHub's English page). Copy it again when the main site's one changes; `check:pages` fails on chrome drift |
 | `docs/video.css` | Only what the film pages add to the main site's design system |
@@ -38,7 +38,7 @@ graph LR
 
   subgraph DOCS["docs/ committed"]
     PAGE[film index.html]
-    MP4[mp4, poster.jpg, og.png]
+    MP4[mp4, poster.webp, og.png]
     REG[docs/index.html register]
   end
 
