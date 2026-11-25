@@ -13,6 +13,7 @@
 
 ## Built
 
+- 2026-11-25 speed pass: `/video/myter/` poster as preloaded WebP (173 to 45 kB); live LCP at 390 px, Slow 4G, CPU 4x 4436 to 1900 ms, transfer 404 to 276 kB; axe 0 on three pages at 390 and 1440 (see HANDOFF).
 - 2026-11-24 bug hunt 2: Swedish `docs/404.html` for missing paths under `/video/` (was GitHub's English page, overflowing at 320), `check:pages` walks it and failed on live before; `preview.mjs` keeps `?v=` on live fetches and reads `/forskning/` live (see HANDOFF).
 - 2026-11-24 bug hunt: onward row count 230 to 245 påståenden, borrowed `/style.css` and `/site.js` now carry the main site's `?v=`; `check:pages` catches both drifts (failed on live before, see HANDOFF).
 

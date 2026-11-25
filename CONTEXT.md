@@ -90,7 +90,8 @@ graph LR
 - npm audit: 2026-11-24, pass, 0 vulnerabilities in production and dev (after remotion 4.0.544, 2026-11-17)
 - Dependabot: 2026-11-24, pass, 0 open alerts
 - Headers (automated): 2026-10-30, pass, 6 of 6 on orgutveckling.se/video, Observatory A+ on orgutveckling.se
-- WCAG 2.2 AA (automated): 2026-11-24, needs-review, axe 0 violations on orgutveckling.se/video (2 pages, 4 widths each, via check-pages, 8 of 8 ok); manual keyboard pass not done
+- WCAG 2.2 AA (automated): 2026-11-25, needs-review, axe 0 violations (WCAG 2.2 AA plus best-practice) on live /video/, /video/myter/ and the 404 page at 390 and 1440 px; check-pages 12 of 12; manual keyboard pass not done
+- Speed: 2026-11-25, pass, live at 390 px, Slow 4G, CPU 4x: LCP /video/ 1640 ms, /video/myter/ 1900 ms (4436 before the WebP poster), 404 page 1644 ms; at 1440 about 200 ms; CLS at most 0,0041; /video/myter/ transfers 276 kB (404 before) plus the mp4 on play
 - UX: 2026-11-24, warn, 4 of 6 script checks pass on live orgutveckling.se/video/ and /video/myter/ (local preview gave the same; no forms so no --interact): warn Fitts targets and Von Restorff primary, both in header, footer and request band copied from the main site; screenshot review at 390 and 1440 found nothing page-specific (2026-10-30: warn, 4 of 6, review not done)
 - OWASP Top 10: 2026-10-30, pass, code review (Mistral Large; Claude read only the verdict line, lows unread), no live probe; 0 high, 0 medium reported
 - Mutation: 2026-11-24, Stryker scripts/preview.mjs 100 % (87 of 87; no tests before), scripts/myter-audio.mjs 64,45 % (50,29 % with its first tests; no tests before), 123 survivors reviewed: which bar kind plays which instrument, volumes and the noise generator, only an ear can judge. src/myter/art.ts 56,06 % (2026-11-04, not re-measured), 312 survivors: pixel coordinates, colours and per-character details only a still can judge
